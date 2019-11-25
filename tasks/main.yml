@@ -1,0 +1,27 @@
+---
+# ------------------------------------------------------------------------
+# tasks file for common
+# ------------------------------------------------------------------------
+
+- name: install common
+  package:
+    name: "{{ common_packages }}"
+    state: present
+  register: common_install_common
+  until: common_install_common is succeeded
+  retries: 3
+
+- name: configure common
+  template:
+    src: "{{ common_config_file }}.j2"
+    dest: "{{ common_config_directory }}/{{ common_config_file }}"
+  notify:
+    - restart common
+
+- name: start and enable common
+  service:
+    name: "{{ common_service }}"
+    state: started
+    enabled: true
+  when:
+    - ansible_virtualization_type != "docker"
