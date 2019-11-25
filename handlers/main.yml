@@ -3,9 +3,11 @@
 # handlers file for common
 # ------------------------------------------------------------------------
 
-- name: restart common
+- name: gather facts
+  setup:
+  become: no
+
+- name: reload network manager
   service:
-    name: "{{ common_service }}"
-    state: restarted
-  when:
-    - ansible_virtualization_type != "docker"
+    name: NetworkManager
+    state: reloaded

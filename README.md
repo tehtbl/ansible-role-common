@@ -1,10 +1,10 @@
 <!-- get id via: ansible-galaxy info tehtbl.skeleton | grep -i "id:" -->
-<a href="https://galaxy.ansible.com/tehtbl/common"><img src="https://img.shields.io/ansible/role/44496"/></a> <a href="https://galaxy.ansible.com/tehtbl/bootstrap"><img src="https://img.shields.io/ansible/quality/44496"/></a> <a href="https://travis-ci.org/tehtbl/ansible-role-common"><img src="https://travis-ci.org/tehtbl/ansible-role-common.svg?branch=master" alt="Build status"/></a>
+<a href="https://galaxy.ansible.com/tehtbl/common"><img src="https://img.shields.io/ansible/role/44923"/></a> <a href="https://galaxy.ansible.com/tehtbl/bootstrap"><img src="https://img.shields.io/ansible/quality/44923"/></a> <a href="https://travis-ci.org/tehtbl/ansible-role-common"><img src="https://travis-ci.org/tehtbl/ansible-role-common.svg?branch=master" alt="Build status"/></a>
 
 Role Description
 ================
 
-The purpose of this role is to configure common things on the system.
+Configure all common things on a system.
 
 Example Playbook
 ================
@@ -23,6 +23,7 @@ This example is taken from `molecule/default/playbook.yml`:
 
   roles:
     - role: tehtbl.bootstrap
+    - role: tehtbl.reboot
     - role: tehtbl.common
       common_parameter: value
 ```

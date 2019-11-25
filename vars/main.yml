@@ -8,3 +8,22 @@ _common_packages:
     - common
 
 common_packages: "{{ _common_packages[ansible_os_family] | default(_common_packages['default']) }}"
+
+
+
+
+
+
+_common_requirements:
+  default:
+    - hostname
+  Amazon-2018:
+    - net-tools
+  Alpine:
+    - net-tools
+  Archlinux:
+    - net-tools
+  CentOS:
+    - dbus
+
+common_requirements: "{{ _common_requirements[ansible_distribution ~ '-' ~ ansible_distribution_major_version] | default(_common_requirements[ansible_distribution] | default(_common_requirements['default'])) }}"
