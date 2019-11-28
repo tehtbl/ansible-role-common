@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+{% if common_search | length > 0 %}
+search {{ common_search|join(' ') }}
+{% endif %}
+{% if common_domain != "" %}
+domain {{ common_domain }}
+{% endif %}
+{% for ns in common_nameservers %}
+nameserver {{ ns }}
+{% endfor %}
+{% if common_options | length > 0 %}
+options {{ common_options|join(' ') }}
+{% endif %}

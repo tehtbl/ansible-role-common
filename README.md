@@ -1,4 +1,4 @@
-<!-- get id via: ansible-galaxy info tehtbl.skeleton | grep -i "id:" -->
+<!-- get id via: ansible-galaxy info tehtbl.common | grep -i "id:" -->
 <a href="https://galaxy.ansible.com/tehtbl/common"><img src="https://img.shields.io/ansible/role/44923"/></a> <a href="https://galaxy.ansible.com/tehtbl/common"><img src="https://img.shields.io/ansible/quality/44923"/></a> <a href="https://travis-ci.org/tehtbl/ansible-role-common"><img src="https://travis-ci.org/tehtbl/ansible-role-common.svg?branch=master" alt="Build status"/></a>
 
 Role Description
@@ -9,7 +9,7 @@ Configure all common things on a system.
 Example Playbook
 ================
 
-This example is taken from `molecule/default/playbook.yml`:
+This example is taken from `molecule/default/playbook.yml` and is tested on each push, pull request and release.
 
 ```yaml
 ---
@@ -23,9 +23,8 @@ This example is taken from `molecule/default/playbook.yml`:
 
   roles:
     - role: tehtbl.bootstrap
-    - role: tehtbl.reboot
     - role: tehtbl.common
-      common_parameter: value
+
 ```
 
 Role Variables
@@ -39,6 +38,28 @@ These variables are set in `defaults/main.yml`:
 # defaults file for common
 # ------------------------------------------------------------------------
 
+# The selected hostname
+common_hostname: "{{ inventory_hostname }}"
+
+# Domain in which to search for local domains
+common_domain: "tbl.lan"
+
+# Fully Qualified Domain Name
+common_fqdn: "{{ common_hostname }}.{{ common_domain }}"
+
+# List of nameservers to be used by the system
+common_nameservers:
+  - 87.118.100.175
+  - 212.82.226.212
+
+# Do you want to reboot on a hostname change?
+common_reboot: true
+
+# search entry in reosl.conf
+common_search: []
+
+# common options for nameservers
+common_options: []
 
 ```
 
@@ -53,6 +74,7 @@ The following roles can be installed to ensure all requirements are met, using `
 ```yaml
 ---
 - tehtbl.bootstrap
+- tehtbl.reboot
 
 ```
 

@@ -3,37 +3,9 @@
 # tasks file for common
 # ------------------------------------------------------------------------
 
-- name: install common
-  package:
-    name: "{{ common_packages }}"
-    state: present
-  register: common_install_common
-  until: common_install_common is succeeded
-  retries: 3
-
-- name: configure common
-  template:
-    src: "{{ common_config_file }}.j2"
-    dest: "{{ common_config_directory }}/{{ common_config_file }}"
-  notify:
-    - restart common
-
-- name: start and enable common
-  service:
-    name: "{{ common_service }}"
-    state: started
-    enabled: true
-  when:
-    - ansible_virtualization_type != "docker"
-
-
-
-
-
-
-
-
-
+# ------------------------------------------------------------------------
+# install packages
+# ------------------------------------------------------------------------
 - name: install requirements
   package:
     name: "{{ common_requirements }}"
@@ -42,23 +14,13 @@
   until: common_install_requirements is succeeded
   retries: 3
 
+# ------------------------------------------------------------------------
+# Network Manager configuration if needed
+# ------------------------------------------------------------------------
 - name: check for network manager
   stat:
     path: /etc/NetworkManager/NetworkManager.conf
   register: common_check_for_network_manager
-
-- name: set nameserver in resolv.conf
-  lineinfile:
-    path: /etc/resolv.conf
-    line: "nameserver {{ item }}"
-  with_items:
-    - "{{ common_nameservers }}"
-  when:
-    - common_nameservers is defined
-    - not common_check_for_network_manager.stat.exists
-    - ansible_virtualization_type != "docker"
-  notify:
-    - gather facts
 
 - name: set nameservers in network manager
   ini_file:
@@ -72,28 +34,62 @@
     - reload network manager
     - gather facts
 
+# ------------------------------------------------------------------------
+# resolv.conf configuration
+# ------------------------------------------------------------------------
+- name: configure resolv.conf
+  template:
+    src: "resolv.conf.j2"
+    dest: "/etc/resolv.conf"
+    mode: "0644"
+  become: True
+  when:
+    - common_nameservers is defined
+    - not common_check_for_network_manager.stat.exists
+    - ansible_virtualization_type != "docker"
+  notify:
+    - gather facts
+
+# ------------------------------------------------------------------------
+# flush handlers
+# ------------------------------------------------------------------------
 - name: flush handlers
   meta: flush_handlers
 
+# ------------------------------------------------------------------------
+# set hostname and reboot if needed
+# ------------------------------------------------------------------------
 - name: set hostname
   hostname:
     name: "{{ common_hostname }}"
   when:
     - ansible_virtualization_type != "docker"
   register: set_hostname
+  notify:
+    - restart hostname
+    - restart systemd-logind
 
 - name: reboot for hostname
   include_role:
-    name: robertdebock.reboot
+    name: tehtbl.reboot
   when:
     - set_hostname.changed
     - common_reboot | bool
   tags:
     - skip_ansible_lint
 
-- name: fill /etc/hosts
-  template:
-    src: hosts.j2
+- name: Re-gather facts
+  action: setup
+  when: ansible_hostname != fqdn
+
+- name: Build hosts file (backups will be made)
+  lineinfile:
     dest: /etc/hosts
-  when:
-    - ansible_virtualization_type != "docker"
+    regexp: "^{{ ansible_default_ipv4.address }}"
+    line: "{{ ansible_default_ipv4.address }} {{ fqdn }} {{ hostname }}"
+    state: present
+    backup: yes
+  when: ansible_default_ipv4.address is defined
+  notify:
+    - restart hostname
+    - restart systemd-logind

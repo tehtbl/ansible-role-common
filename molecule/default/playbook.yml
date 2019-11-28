@@ -6,6 +6,5 @@
 
   roles:
     - role: tehtbl.bootstrap
-    - role: tehtbl.reboot
     - role: common
       common_parameter: value
