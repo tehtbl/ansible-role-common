@@ -42,7 +42,7 @@
     src: "resolv.conf.j2"
     dest: "/etc/resolv.conf"
     mode: "0644"
-  become: True
+  become: true
   when:
     - common_nameservers is defined
     - not common_check_for_network_manager.stat.exists
@@ -80,15 +80,15 @@
 
 - name: Re-gather facts
   action: setup
-  when: ansible_hostname != fqdn
+  when: ansible_hostname != common_fqdn
 
 - name: Build hosts file (backups will be made)
   lineinfile:
     dest: /etc/hosts
     regexp: "^{{ ansible_default_ipv4.address }}"
-    line: "{{ ansible_default_ipv4.address }} {{ fqdn }} {{ hostname }}"
+    line: "{{ ansible_default_ipv4.address }} {{ common_fqdn }} {{ common_hostname }}"
     state: present
-    backup: yes
+    backup: true
   when: ansible_default_ipv4.address is defined
   notify:
     - restart hostname
