@@ -42,7 +42,7 @@
     src: "resolv.conf.j2"
     dest: "/etc/resolv.conf"
     mode: "0644"
-  become: True
+  become: true
   when:
     - common_nameservers is defined
     - not common_check_for_network_manager.stat.exists
@@ -69,6 +69,20 @@
     - restart hostname
     - restart systemd-logind
 
+- name: build hosts file (backups will be made)
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ ansible_default_ipv4.address }}"
+    line: "{{ ansible_default_ipv4.address }} {{ common_fqdn }} {{ common_hostname }}"
+    state: present
+    backup: true
+  when:
+    - ansible_default_ipv4.address is defined
+    - ansible_virtualization_type != "docker"
+  notify:
+    - restart hostname
+    - restart systemd-logind
+
 - name: reboot for hostname
   include_role:
     name: tehtbl.reboot
@@ -80,16 +94,4 @@
 
 - name: Re-gather facts
   action: setup
-  when: ansible_hostname != fqdn
-
-- name: Build hosts file (backups will be made)
-  lineinfile:
-    dest: /etc/hosts
-    regexp: "^{{ ansible_default_ipv4.address }}"
-    line: "{{ ansible_default_ipv4.address }} {{ fqdn }} {{ hostname }}"
-    state: present
-    backup: yes
-  when: ansible_default_ipv4.address is defined
-  notify:
-    - restart hostname
-    - restart systemd-logind
+  when: ansible_hostname != common_fqdn

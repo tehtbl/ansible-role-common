@@ -5,7 +5,7 @@
 
 - name: gather facts
   setup:
-  become: no
+  become: false
 
 - name: reload network manager
   service:
