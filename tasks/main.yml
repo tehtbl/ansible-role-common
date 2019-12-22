@@ -22,8 +22,7 @@
     path: /etc/NetworkManager/NetworkManager.conf
   register: common_check_for_network_manager
 
--
-  name: set nameservers in network manager
+- name: set nameservers in network manager
   ini_file:
     path: /etc/NetworkManager/conf.d/dnsservers.conf
     section: global-dns-domain-*
