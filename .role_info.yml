@@ -1,0 +1,8 @@
+---
+gid: 44923
+name: common
+desc: Configure all common things on your system.
+reqs:
+  - tehtbl.bootstrap
+  - tehtbl.reboot
+tags: []
