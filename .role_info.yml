@@ -2,7 +2,7 @@
 gid: 44923
 name: common
 desc: Configure all common things on your system.
-reqs:
+deps:
   - tehtbl.bootstrap
   - tehtbl.reboot
 tags: []

@@ -4,7 +4,7 @@
 Role Description
 ================
 
-Configure all common things on a system.
+Configure all common things on your system.
 
 Example Playbook
 ================
@@ -13,17 +13,15 @@ This example is taken from `molecule/default/playbook.yml` and is tested on each
 
 ```yaml
 ---
-# ------------------------------------------------------------------------
-# Install and configure common
-# ------------------------------------------------------------------------
-- name: common
+- name: Converge
   hosts: all
   become: true
   gather_facts: false
 
   roles:
-    - role: tehtbl.bootstrap
-    - role: tehtbl.common
+    - tehtbl.role: tehtbl.bootstrap
+    - tehtbl.role: common
+      common_parameter: value
 
 ```
 
@@ -67,12 +65,11 @@ Requirements
 ============
 
 - Access to a repository containing packages, likely on the internet.
-- A recent version of Ansible (Tests run on the current, previous and next release of Ansible).
+- A recent version of Ansible. (Tests run on the current, previous and next release of Ansible.)
 
 The following roles can be installed to ensure all requirements are met, using `ansible-galaxy install -r requirements.yml`:
 
 ```yaml
----
 - tehtbl.bootstrap
 - tehtbl.reboot
 
@@ -156,7 +153,7 @@ vagrant up
 License
 =======
 
-GNU General Public License v3.0
+MIT License
 
 Author Information
 ==================

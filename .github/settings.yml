@@ -1,4 +1,4 @@
 ---
 repository:
-  description: Configure all common things on a system.
+  description: Configure all common things on your system.
   homepage: https://github.com/tehtbl/ansible-role-common
