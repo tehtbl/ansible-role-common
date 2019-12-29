@@ -19,9 +19,21 @@ This example is taken from `molecule/default/playbook.yml` and is tested on each
   gather_facts: false
 
   roles:
-    - tehtbl.role: tehtbl.bootstrap
-    - tehtbl.role: common
-      common_parameter: value
+    - role: tehtbl.common
+
+```
+
+The machine you are running this on, may need to be prepared, I use this playbook to ensure everything is in place to let the role work.
+
+```yaml
+---
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: false
+
+  roles:
+    - role: tehtbl.bootstrap
 
 ```
 
@@ -53,7 +65,7 @@ common_nameservers:
 # Do you want to reboot on a hostname change?
 common_reboot: true
 
-# search entry in reosl.conf
+# search entry in resolv.conf
 common_search: []
 
 # common options for nameservers

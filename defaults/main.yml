@@ -20,7 +20,7 @@ common_nameservers:
 # Do you want to reboot on a hostname change?
 common_reboot: true
 
-# search entry in reosl.conf
+# search entry in resolv.conf
 common_search: []
 
 # common options for nameservers
