@@ -59,16 +59,6 @@
 # ------------------------------------------------------------------------
 # set hostname and reboot if needed
 # ------------------------------------------------------------------------
-- name: set hostname
-  hostname:
-    name: "{{ common_hostname }}"
-  when:
-    - ansible_virtualization_type != "docker"
-  register: set_hostname
-  notify:
-    - restart hostname
-    - restart systemd-logind
-
 - name: build hosts file (backups will be made)
   lineinfile:
     dest: /etc/hosts
@@ -79,6 +69,16 @@
   when:
     - ansible_default_ipv4.address is defined
     - ansible_virtualization_type != "docker"
+  notify:
+    - restart hostname
+    - restart systemd-logind
+
+- name: set hostname
+  hostname:
+    name: "{{ common_hostname }}"
+  when:
+    - ansible_virtualization_type != "docker"
+  register: set_hostname
   notify:
     - restart hostname
     - restart systemd-logind
